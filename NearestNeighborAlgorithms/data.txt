@@ -1,5 +1,0 @@
-Ciudad 1, 5, 30
-Ciudad 2, 15, 10
-Ciudad 3, 20, 30
-Ciudad 4, 2, 4
-Ciudad 5, 20, 1
