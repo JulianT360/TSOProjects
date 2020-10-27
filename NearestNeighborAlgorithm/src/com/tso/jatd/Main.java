@@ -1,12 +1,11 @@
 package com.tso.jatd;
 
-import com.tso.jatd.algorithms.NNAlgorithm;
+import com.tso.jatd.algorithms.Nnalgorithm;
 
 public class Main {
 
     public static void main(String[] args) {
-        NNAlgorithm algorithm = new NNAlgorithm();
+        Nnalgorithm algorithm = new Nnalgorithm();
         algorithm.solve();
-        System.out.println("Hola mundo");
     }
 }
