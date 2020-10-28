@@ -40,13 +40,12 @@ public class Nnalgorithm {
         // Se calculan las distancias euclidianas
         distances = new Double[nodes.size()][nodes.size()];
         distances = calculateEucladianDistances();
-
         // Se obtiene el nodo inicial
         Scanner in = new Scanner(System.in);
-        System.out.println("Ingresa el nodo inicial (del 1 al " + (nodes.size() + 1) + "): ");
+        System.out.println("Ingresa el nodo inicial (del 1 al " + (nodes.size()) + "): ");
         String inputNode = in.nextLine();
         startNode = Integer.parseInt(inputNode) - 1;
-
+        printDistances();
         // Se determinan los nodos a visitar
         int[] nodesVisited = calculateNodesVisited();
 
@@ -61,7 +60,32 @@ public class Nnalgorithm {
             }
             counter ++;
         }
-        System.out.println("\nTotal Cost: " + totalCost);
+        System.out.println("\n\nTotal Cost: " + Math.round(totalCost));
+    }
+
+    private void printDistances() {
+        System.out.println("Distancias: ");
+        int size = (nodes.get(0).getName()).length();
+        //Espacio inicial
+        for (int i = 0; i < size+2 ; i++) {
+            System.out.print(" ");
+        }
+
+        //Columnas
+        for(int i=0; i<nodes.size(); i++) {
+            System.out.print("\t" + nodes.get(i).getName() + "\t|");
+        }
+        System.out.println("");
+
+        //Valores
+        for(int i = 0; i < nodes.size(); i++) {
+            System.out.print(nodes.get(i).getName() + " | ");
+            for (int j=0; j < nodes.size(); j++) {
+                System.out.print("\t" + distances[i][j] + "\t\t|");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
     }
 
     /**
@@ -156,7 +180,7 @@ public class Nnalgorithm {
                 Double distanceY = Math.pow((y2 - y1), 2);
 
                 //Se calcula la distanccia
-                Double distance = Math.sqrt(distanceX + distanceY);
+                Double distance = Double.valueOf(Math.round(Math.sqrt(distanceX + distanceY)));
 
                 //Se
                 dist[i][j] = distance;
