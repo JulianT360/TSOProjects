@@ -52,6 +52,13 @@ public class NearestInsertion {
         subtour.add(calculateNextNode(startNode));
         subtour.add(startNode); // Guarda el nodo final.
 
+        System.out.println();
+        for(int i = 0 ; i < subtour.size(); i++){
+            System.out.print(subtour.get(i)+1);
+            if( i < subtour.size()-1) {
+                System.out.print(" -> ");
+            }
+        }
         // Se obtienen los nodos que aun no se han visitado
         getNodesNotVisited();
 
@@ -59,7 +66,17 @@ public class NearestInsertion {
         while(!nodesRemaining.isEmpty()) {
 
             int k = getNearestNextNode();
+            System.out.println("\nNode k: " + (k+1));
             subtour = insertNearestNextNode(k);
+            System.out.println();
+            for(int i = 0 ; i < subtour.size(); i++){
+                System.out.print(subtour.get(i)+1);
+                if( i < subtour.size()-1) {
+                    System.out.print(" -> ");
+                }
+            }
+            System.out.println();
+
             getNodesNotVisited();
 
         }
@@ -206,8 +223,12 @@ public class NearestInsertion {
      * @return Obtiene el costo diferencial.
      */
     private Double calculateDiferenceInsertion(int posK, List<Integer> subtourK) {
-        return (distances[subtourK.get(posK-1)][subtourK.get(posK)] + distances[subtourK.get(posK)][subtourK.get(posK+1)])
+        Double arcLong = (distances[subtourK.get(posK-1)][subtourK.get(posK)] + distances[subtourK.get(posK)][subtourK.get(posK+1)])
                 - distances[subtourK.get(posK-1)][subtourK.get(posK+1)];
+        System.out.println("f = c[" + (posK) + "][" + (posK+1) + "] + c[" + (posK+1) + "][" + (posK+2) + "] " +
+                "- c[" + (posK) + "][" + (posK+2) + "] = " + arcLong);
+
+        return arcLong;
     }
 
     /**
@@ -270,7 +291,7 @@ public class NearestInsertion {
      * @param subtourK
      */
     private void showResults(List<Integer> subtourK) {
-        System.out.println("Orden de las ciudades: ");
+        System.out.println("\nOrden de las ciudades: ");
         int counter = 0;
         for (int nodeVisited : subtourK) {
             System.out.print(nodes.get(nodeVisited).getName());
@@ -280,7 +301,7 @@ public class NearestInsertion {
             }
             counter ++;
         }
-        System.out.println("\n\nTotal Cost: " + Math.round(totalCost));
+        System.out.println("\n\nCosto total: " + Math.round(totalCost));
     }
 
     /**
