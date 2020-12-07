@@ -53,6 +53,10 @@ public class Main {
         distancias = new Double[nodos.size()][nodos.size()];
         distancias = calcularDistancias();
 
+        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("Cheapest Insertion Algorithm");
+        System.out.println("----------------------------------------------------------------------------------------");
+
         // Se pide el nodo inicial
         Scanner in = new Scanner(System.in);
         System.out.println("introduce el nodo de inicio (del 1 al " + (nodos.size()) + "): ");
@@ -77,20 +81,40 @@ public class Main {
         subtour.add(mejorNodo);
         subtour.add(nodoInicial);
 
+        System.out.println("----------------------------------------------------------------------------------------");
+        // Se imprime subtour inicial
+        System.out.println("Initial subtour: ");
+        int counter = 0;
+        for (int nodeVisited : subtour) {
+            System.out.print(nodeVisited+1);
+
+            if(counter < subtour.size()-1) {
+                System.out.print(" -> ");
+            }
+            counter ++;
+        }
+
+        calcularCostoSubtour();
+        System.out.println("\nCost: " + costoTotal);
+
+
         // Se obtienen los nodos que aun no se han visitado
         obtenerNodosNoVisitados();
-
         // Se calcula el proximo nodo a visitar
         while(!nodosRestantes.isEmpty()) {
 
             List<Integer> nextSubtour = new ArrayList<>();
             Double costNextSubtour = 1000000000000000000.0;
+            int bestPos = 0;
+            System.out.println("----------------------------------------------------------------------------------------");
 
             for(int k : nodosRestantes) { // Se recorren los nodos restantes
 
                 int pos = 1; // Posible arco de insercion inicial
 
                 // Se recorren los arcos
+//                System.out.println("----------------------------------------------------------------------------------------");
+                System.out.println("\nPossible subtours (next node: " + (k+1) + "): ");
                 for (int i = 0; i < subtour.size()-1; i++) {
 
                     Double tmpCostSubtour = 1000000000000000000.0; // Cost of best node
@@ -111,28 +135,71 @@ public class Main {
                             + distancias[tmpNextSubtour.get(pos)][tmpNextSubtour.get(pos+1)])
                             - distancias[tmpNextSubtour.get(pos-1)][tmpNextSubtour.get(pos+1)];
 
+                    // Se imprime el proximo arco a insertar
+                    System.out.println("Subtour: " + "(" + (tmpNextSubtour.get(pos-1)+1) + ", " + (tmpNextSubtour.get(pos)+1) + ")"
+                            + " -> (" + (tmpNextSubtour.get(pos)+1) + ", " + (tmpNextSubtour.get(pos+1)+1) + ") = " + tmpCostSubtour);
+
                     if(costNextSubtour >= tmpCostSubtour) {
                         nextSubtour = tmpNextSubtour;
                         costNextSubtour = tmpCostSubtour;
+                        bestPos = pos;
                     }
 
                     pos++;
                 }
             }
 
+            System.out.println("\nSubtour: " + "(" + (nextSubtour.get(bestPos-1)+1) + ", " + (nextSubtour.get(bestPos)+1) + ")"
+                    + " -> " + "(" + (nextSubtour.get(bestPos)+1) + ", " + (nextSubtour.get(bestPos+1)+1) + ") = " + costNextSubtour + " <-- Selected");
+
             subtour = nextSubtour;
             obtenerNodosNoVisitados();
+
+            calcularCostoSubtour();
+
+            System.out.println("\nNext Subtour: ");
+            counter = 0;
+            for (int nodeVisited : subtour) {
+                System.out.print(nodeVisited+1);
+
+                if(counter < subtour.size()-1) {
+                    System.out.print(" -> ");
+                }
+                counter ++;
+            }
+
+            System.out.println("\nCost: " + costoTotal);
+
+            counter = 0;
+
+            System.out.println("\nList of Nodes Remaining: ");
+            if (!nodosRestantes.isEmpty()) {
+                for(int nodoRestante : nodosRestantes) {
+
+                    System.out.print(nodoRestante+1);
+
+                    if(counter < nodosRestantes.size()-1) {
+                        System.out.print(", ");
+                    }
+                    counter ++;
+                }
+                System.out.println("");
+            }
 
         }
 
         // Se calcula el costo total.
+        calcularCostoSubtour();
+
+        // Se muestra el resultado
+        mostrarResultados(subtour);
+    }
+
+    private static void calcularCostoSubtour() {
         costoTotal = 0.0;
         for(int i = 1; i < subtour.size(); i++) {
             costoTotal += distancias[subtour.get(i-1)][subtour.get(i)];
         }
-
-        // Se muestra el resultado
-        mostrarResultados(subtour);
     }
 
     private static boolean nodoYaVisitado(List<Integer> visitados, int proximoNodo) {
@@ -188,6 +255,7 @@ public class Main {
     }
 
     private static void mostrarResultados(List<Integer> subtourK) {
+        System.out.println("\n----------------------------------------------------------------------------------------");
         System.out.println("Orden de las ciudades: ");
         int counter = 0;
         for (int nodeVisited : subtourK) {

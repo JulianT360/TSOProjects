@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class NearestInsertion {
+public class FarthestInsertion {
 
     private FileUtils fileUtils;
     private Double[][] distances;
@@ -22,7 +22,7 @@ public class NearestInsertion {
     /**
      * Constructor
      */
-    public NearestInsertion() {
+    public FarthestInsertion() {
         fileUtils = new FileUtils();
         nodes = new ArrayList<>();
         startNode = 0;
@@ -43,7 +43,7 @@ public class NearestInsertion {
         distances = calculateEucladianDistances();
 
         System.out.println("----------------------------------------------------------------------------------------");
-        System.out.println("Nearest Insertion Algorithm");
+        System.out.println("Farthest Insertion Algorithm");
         System.out.println("----------------------------------------------------------------------------------------");
 
         // Se muestran las distancias
@@ -74,11 +74,11 @@ public class NearestInsertion {
         // Se calcula el proximo nodo a visitar
         while(!nodesRemaining.isEmpty()) {
 
-            int k = getNearestNextNode();
+            int k = getFarthestNode();
             System.out.println("\nNext node k: " + (k+1));
 
             System.out.println("\nPossible insertion points: ");
-            subtour = insertNearestNextNode(k);
+            subtour = insertFarthestNextNode(k);
 
             System.out.println("\nNext subtour: ");
             for (int i = 0 ; i < subtour.size(); i++) {
@@ -118,10 +118,10 @@ public class NearestInsertion {
      * @param k
      * @return
      */
-    private List<Integer> insertNearestNextNode(int k) {
+    private List<Integer> insertFarthestNextNode(int k) {
 
         List<Integer> nextSubtour = new ArrayList<>(); // Proximo subtour
-        Double costNextSubtour = 1000000000000000000.0; // Costo del proximo subtour
+        Double costNextSubtour = 100000000000000000000000.0; // Costo del proximo subtour
 
         int pos = 1; // Posible arco de insercion
         int bestPos = 0;
@@ -129,7 +129,7 @@ public class NearestInsertion {
         // Se recorren los arcos
         for (int i = 0; i < subtour.size()-1; i++) {
 
-            Double tmpCostSubtour = 1000000000000000000.0; // Cost of best node
+            Double tmpCostSubtour = 1000000000000000000000000000.0; // Cost of best node
             List<Integer> tmpNextSubtour = new ArrayList<>();
 
             // Se crea un nuevo subtour insertando el nodo en la posicion indicada
@@ -159,19 +159,19 @@ public class NearestInsertion {
         return nextSubtour;
     }
 
-    private int getNearestNextNode() {
+    private int getFarthestNode() {
         int nextK = 0; // Nearest node
-        Double costNextK = 1000000000000000000.0; // Cost of best node
-        System.out.println("Select next node: ");
+        Double costNextK = 0.0; // Cost of best node
+        //System.out.println("Select next node: ");
         for(int k = 0; k < subtour.size()-1; k++) { // Se recorren los nodos del subtour
 
             for(Integer nodeRemaining: nodesRemaining) { // Se recorren los nodos restantes
 
                 if(k != nodeRemaining) {
-                    System.out.println("Distance from: " + (k+1) + " -> "+ (nodeRemaining+1)
-                            + " = " + distances[k][nodeRemaining]);
+                    //System.out.println("Distance from: " + (k+1) + " -> "+ (nodeRemaining+1)
+                    //        + " = " + distances[k][nodeRemaining]);
 
-                    if (costNextK > distances[k][nodeRemaining]) {
+                    if (costNextK < distances[k][nodeRemaining]) {
                         costNextK = distances[k][nodeRemaining];
                         nextK = nodeRemaining;
                     }
@@ -179,32 +179,32 @@ public class NearestInsertion {
 
             }
         }
-        System.out.println("\nNext node: " + (nextK+1) + " with Cost: " + (costNextK) + " <-- Selected\n");
+        //System.out.println("\nNext node: " + (nextK+1) + " with Cost: " + (costNextK) + " <-- Selected\n");
         return nextK;
     }
 
     private int calculateNextNode(int actualNode) {
         nodeCounter = 0;
 
-        Double bestDistance = 100000000.0; // Distancia arbitrario default
+        Double bestDistance = 0.0; // Distancia arbitrario default
         int bestNode = 0;
-        System.out.println("\n\nSelect next node: ");
+        //System.out.println("\n\nSelect next node: ");
         // Se revisan los posibles nodos a visitar.
         for (int nextNode = 0; nextNode < nodes.size(); nextNode++) {
 
             if(!isNodeAlreadyVisited(subtour, nextNode)) { // Se valida si el nodo ya ha sido visitado
                 // Se imprime la valoracion del proximo nodo.
-                System.out.println("Node: " + nextNode + "distance from: " + (actualNode+1) + " -> "+ (nextNode+1)
-                        + " = " + distances[actualNode][nextNode]);
+                //System.out.println("Node: " + nextNode + "distance from: " + (actualNode+1) + " -> "+ (nextNode+1)
+                //        + " = " + distances[actualNode][nextNode]);
 
-                if (bestDistance > distances[actualNode][nextNode]) {
+                if (bestDistance < distances[actualNode][nextNode]) {
                     bestDistance = distances[actualNode][nextNode];
                     bestNode = nextNode;
                 }
             }
         }
 
-        System.out.println("\nNext node: " + bestNode + " with cost = " + bestDistance + " <-- Selected\n");
+        //System.out.println("\nNext node: " + bestNode + " with cost = " + bestDistance + " <-- Selected\n");
 
         return bestNode;
     }

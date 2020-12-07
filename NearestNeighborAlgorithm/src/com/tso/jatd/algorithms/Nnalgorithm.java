@@ -2,6 +2,8 @@ package com.tso.jatd.algorithms;
 
 import com.tso.jatd.FileUtils;
 import com.tso.jatd.Node;
+
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,6 +19,7 @@ public class Nnalgorithm {
     private FileUtils fileUtils;
     private Double[][] distances;
     private List<Node> nodes;
+    private List<Integer> nodesRemaining;
     private int startNode;
     private Double totalCost;
     private int nodeCounter;
@@ -27,6 +30,7 @@ public class Nnalgorithm {
     public Nnalgorithm() {
         fileUtils = new FileUtils();
         nodes = new ArrayList<>();
+        nodesRemaining = new ArrayList<>();
         startNode = 0;
     }
 
@@ -40,12 +44,17 @@ public class Nnalgorithm {
         // Se calculan las distancias euclidianas
         distances = new Double[nodes.size()][nodes.size()];
         distances = calculateEucladianDistances();
+        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("Nearest Neighbor Algorithm");
+        System.out.println("----------------------------------------------------------------------------------------");
         // Se obtiene el nodo inicial
         Scanner in = new Scanner(System.in);
         System.out.println("Ingresa el nodo inicial (del 1 al " + (nodes.size()) + "): ");
         String inputNode = in.nextLine();
         startNode = Integer.parseInt(inputNode) - 1;
         printDistances();
+        System.out.println("----------------------------------------------------------------------------------------");
+
         // Se determinan los nodos a visitar
         int[] nodesVisited = calculateNodesVisited();
 
@@ -103,6 +112,37 @@ public class Nnalgorithm {
         // Comenzamos a revisar desde el nodo inicial
         for (int actualNode = startNode; actualNode < nodes.size(); actualNode++) {
 
+            updateNodesRemaining(visited);
+
+            System.out.println("Subtour: ");
+            int counter = 0;
+            for (int nodeVisited : visited) {
+                System.out.print(nodes.get(nodeVisited).getName());
+
+                if(counter < visited.length-1) {
+                    System.out.print(" -> ");
+                }
+                counter ++;
+            }
+            System.out.println("\nSubtour cost: " + totalCost);
+
+            counter = 0;
+            System.out.println("\nNodes remaining: ");
+            for (int nodeRemaining: nodesRemaining) {
+
+                System.out.print(nodeRemaining);
+
+                if(counter < nodesRemaining.size()-1) {
+                    System.out.print(", ");
+                }
+                counter ++;
+            }
+
+            System.out.println("\n\nCalculate next node: ");
+            System.out.println("----------------------------------------------------------------------------------------");
+
+
+
             Double bestDistance = 100000000.0; // Distancia arbitrario default
             int bestNode = 0;
 
@@ -111,7 +151,7 @@ public class Nnalgorithm {
 
                 // Si el nodo no es el mismo que el que estamos revisando y aun no se ha visitado, se puede comparar.
                 if (!isNodeAlreadyVisited(visited, nextNode)) {
-
+                    System.out.println("Dist: " + (actualNode+1) + " -> "  + (nextNode+1) + " = " + distances[actualNode][nextNode]);
                     // Si la distancia del nodo a revisar es menor que la ya considerada, se selecciona el nodo.
                     if (bestDistance > distances[actualNode][nextNode]) {
                         bestDistance = distances[actualNode][nextNode]; // Guardamos la distancia para comparar en la proxima iteracion.
@@ -121,6 +161,9 @@ public class Nnalgorithm {
                 }
 
             }
+
+            System.out.println("\nDist: " + (actualNode+1) + " -> "  + (bestNode+1) + " = " + bestDistance + " <-- Selected ");
+            System.out.println("\n----------------------------------------------------------------------------------------");
 
             actualNode = bestNode - 1; // Se setea con un numero antes debido al incrementador del ciclo for
             nodeCounter++; // Contador independiente para contar el numero de nodos recorridos
@@ -156,6 +199,16 @@ public class Nnalgorithm {
             }
         }
         return alreadyVisited;
+    }
+
+    private void updateNodesRemaining(int[] visited) {
+        nodesRemaining = new ArrayList<>();
+        for (Node node: nodes) {
+            int indexNode = Integer.parseInt(node.getName());
+            if (!isNodeAlreadyVisited(visited, indexNode-1)) {
+                nodesRemaining.add(indexNode);
+            }
+        }
     }
 
     /**
